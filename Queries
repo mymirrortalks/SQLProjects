@@ -1,0 +1,112 @@
+Select * from project..data
+
+--Total Episode
+select count( Distinct EpNo) from project..Data
+
+select max(EpNo) from project..Data
+
+--Pitches 
+
+select Distinct Brand from project..Data 
+select count(Distinct Brand) from project..Data 
+
+--pitches converted 
+
+select cast(sum(a.converted_not_converted) as float) /cast(count(*) as float) from (
+select [Amount Invested lakhs] , case when [Amount Invested lakhs]>0 then 1 else 0 end as converted_not_converted from project..data) a
+
+-- total male
+
+select sum(Male) from project..Data
+
+-- total female
+
+select sum(Female) from project..Data
+
+--gender ratio
+
+select sum(Female)/sum(Male) from project..data
+
+-- total invested amount
+
+select sum([Amount Invested lakhs]) from project..data
+
+-- avg equity taken
+
+select avg(a.Equity_Taken) from
+(select * from project..data where Equity_Taken>0) a
+
+--highest deal taken
+
+select max([Amount Invested lakhs]) from project..data 
+
+--higheest equity taken
+
+select max([Equity_Taken]) from project..data
+
+-- startups having at least women
+
+SELECT SUM(a.female_count) AS total_female_count
+FROM (
+    SELECT female, CASE WHEN female > 0 THEN 1 ELSE 0 END AS female_count
+    FROM project..data
+) a
+HAVING SUM(a.female_count) > 0;
+
+
+-- pitches converted having atleast ne women
+
+select * from project..data
+
+
+SELECT SUM(b.female_count) AS total_female_count
+FROM (
+    SELECT CASE WHEN a.Female > 0 THEN 1 ELSE 0 END AS female_count, a.*
+    FROM (
+        SELECT *
+        FROM project..data
+        WHERE Deal != 'No Deal'
+    ) a
+) b
+HAVING SUM(b.female_count) > 0;
+
+-- avg team members
+
+SELECT AVG([Team members]) AS average_team_members
+FROM project..data;
+
+-- amount invested per deal
+
+select avg(a.[Amount Invested lakhs]) amount_invested_per_deal from
+(select * from project..data where Deal!='No Deal') a
+
+--Location Group of Contestants:
+
+SELECT location, COUNT(location) AS cnt
+FROM project..data
+GROUP BY location
+ORDER BY cnt DESC;
+
+--Sector Group of Contestants:
+SELECT sector, COUNT(sector) AS cnt
+FROM project..data
+GROUP BY sector
+ORDER BY cnt DESC;
+
+--Partner Deals:
+
+
+SELECT partners, COUNT(partners) AS cnt
+FROM project..data
+WHERE partners != '-'
+GROUP BY partners
+ORDER BY cnt DESC;
+
+--Startup with the Highest Investment in Each Sector:
+SELECT c.*
+FROM (
+    SELECT brand, sector, [Amount Invested lakhs], RANK() OVER(PARTITION BY sector ORDER BY  [Amount Invested lakhs] DESC) AS rnk
+    FROM project..data
+) c
+WHERE c.rnk = 1;
+
