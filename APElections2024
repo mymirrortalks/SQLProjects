@@ -1,0 +1,359 @@
+Andhra Pradesh Elections 2024 SQL Analysis
+
+Total postal votes - 475059
+Total EVM_Votes - 33425490
+Sum Total Votes – 33900549
+
+•	90 individual parties ( including Nota ) got votes in Andhra Pradesh Elections 2024
+•	Nota votes – 370690
+•	Sum of votes ( Excluding 4 highlighted )- 1,222,014
+Party	Total_votes
+Telugu Desam	15466812
+Yuvajana Sramika Rythu Congress Party	13354345
+Janasena Party	2317747
+Bharatiya Janata Party	953977
+Indian National Congress	585654
+None of the Above	370690
+Independent	369836
+Bahujan Samaj Party	204543
+Communist Party of India (Marxist)	43012
+Jai Bharat National Party	24409
+Navarang Congress Party	21101
+Bharatha Chaitanya Yuvajana Party	19028
+All India Forward Bloc	17224
+Pyramid Party of India	16222
+Jaibhim Rao Bharat Party	14715
+Jatiya Jana Sena Party	13933
+Communist Party of India	10873
+Social Democratic Party Of India	7951
+Liberation Congress Party	6553
+Samajwadi Party	6182
+Andhra Rastra Praja Samithi	5969
+Rashtriya Praja Congress (Secular)	4518
+Republican Party of India (A)	4292
+Navataram Party	3723
+Bharat Adivasi Party	3391
+Gondwana Dandkaranya Party	3287
+Telugu Rajadhikara Samiti Party	2846
+Reforms Party of India	2773
+All India Jaihind Party	2765
+Dalita Bahujana Party	2599
+Jaathia Chethi Vruthula Ikya Vedika Party	2167
+Communist Party of India (Marxist-Leninist) (Liberation)	1949
+Akhil Bharatiya Jan Sangh	1821
+Naba Bharata Nirmana Seva Party	1807
+Yuga Thulasi Party	1760
+Praja Shanthi Party	1700
+Jai Maha Bharath Party	1670
+Indian Union Muslim League	1646
+India Praja Bandhu Party	1620
+Radical Party of India (Ambedkarist)	1548
+Anna YSR Congress Party	1437
+Loktantrik Janta Dal	1429
+Revolutionary Socialist Party	1388
+Viduthalai Chiruthaigal Katchi	1223
+All India Kisan Janatha party	1003
+Jateeya Sama Samajam Party	986
+Republican Party of India	920
+Yuva Taram Party	916
+Telugu Nava Garjana Party	703
+National Maha Sabha Party	657
+Praja Prasthanam Party	614
+Republican Party of India (Athawale)	602
+Neethi Nijayithi Party	590
+Super Rangers Party	538
+Republican Party of India (Khobragade)	537
+Nationalist Janshakti Party	532
+Telugu Janata Party	524
+Jai Hindustan Party	522
+Studentz United For Nation Party	472
+Socialist Unity Centre Of India (COMMUNIST)	442
+Prem Janata Dal	436
+Bharatiya Prajagala Kalyana Paksha	322
+Jana Sahayaka Sakthi	315
+Prabuddha Republican Party	314
+Indian Believers Party (IBP)	304
+Navodayam Party	286
+Telugu Vijayam Party	280
+All India Mahila Empowerment Party	276
+Andhra Pradesh Rashtra Samithi	275
+Bharosa Party	271
+Indian Labour Party (Ambedkar Phule)	250
+Young Senior Rich Common People Kings Party	234
+Ambedkar National Congress	232
+Bhartiya Rashtriya Dal	214
+National Nava Kranthi Party	204
+Jai Swaraj Party	193
+Indian Praja Congress	169
+Jana Vaahini Party	163
+Rashtriya Samaj Dal (R)	141
+Jai Bharat Party	133
+Praja Ektha Party	130
+Marxist Communist Party of India (United)	126
+Rashtriya Janata Dal	119
+Vishwa Jana Party	103
+United Republican Party of India	91
+All Peoples Party	81
+Nava Socialism Party	73
+Mahajana Rajyam Party	50
+Mana Desam Party	43
+Rashtriya Jankranti Party	28
+Total 	33900549
+
+
+1. Performance Analysis by Constituency
+Query to find the constituency with the highest and lowest total votes:
+-- Constituency with the highest total votes
+SELECT 
+    Assembly_Constituency_Number, Assembly_Constituency, 
+
+    MAX(Total_Votes) AS Highest_Total_Votes
+FROM 
+   [Apelection].[dbo].[APelections] 
+
+GROUP BY 
+
+    Assembly_Constituency , Assembly_Constituency_Number
+ORDER BY 
+
+   Assembly_Constituency_Number ASC , Highest_Total_Votes DESC
+
+-- Constituency with the lowest total votes
+SELECT 
+    Assembly_Constituency_Number, Assembly_Constituency, 
+
+    MIN(Total_Votes) AS Lowest_Total_Votes
+FROM 
+   [Apelection].[dbo].[APelections] 
+
+GROUP BY 
+
+    Assembly_Constituency , Assembly_Constituency_Number
+ORDER BY 
+
+   Assembly_Constituency_Number ASC , Lowest_Total_Votes DESC
+-- Constituency with the SUM total votes
+
+SELECT 
+    Assembly_Constituency_Number, Assembly_Constituency, 
+
+    Sum(Total_Votes) AS Sum_Total_Votes
+FROM 
+   [Apelection].[dbo].[APelections] 
+
+GROUP BY 
+
+    Assembly_Constituency , Assembly_Constituency_Number
+ORDER BY 
+
+   Assembly_Constituency_Number ASC , Sum_Total_Votes DESC
+
+Query to find the candidate with the highest percentage of votes in each constituency:
+-- Query to find the candidate with the highest percentage of votes in each assembly constituency
+SELECT 
+    a.Assembly_Constituency, 
+    a.Candidate, 
+    a.Percentage_of_Votes
+FROM 
+    [Apelection].[dbo].[APelections] a
+JOIN 
+    (
+        SELECT 
+            Assembly_Constituency, 
+            MAX(Percentage_of_Votes) AS Max_Percentage_of_Votes
+        FROM 
+            [Apelection].[dbo].[APelections]
+        GROUP BY 
+            Assembly_Constituency
+    ) b
+ON 
+    a.Assembly_Constituency = b.Assembly_Constituency 
+    AND a.Percentage_of_Votes = b.Max_Percentage_of_Votes;
+-- Query to find the candidate with the min percentage of votes in each assembly constituency
+SELECT 
+    a.Assembly_Constituency, 
+    a.Candidate, 
+    a.Percentage_of_Votes
+FROM 
+    [Apelection].[dbo].[APelections] a
+JOIN 
+    (
+        SELECT 
+            Assembly_Constituency, 
+            min(Percentage_of_Votes) AS MIN_Percentage_of_Votes
+        FROM 
+            [Apelection].[dbo].[APelections]
+        GROUP BY 
+            Assembly_Constituency
+    ) b
+ON 
+    a.Assembly_Constituency = b.Assembly_Constituency 
+    AND a.Percentage_of_Votes = b.MIN_Percentage_of_Votes;
+
+
+
+
+2. Candidate and Party Comparison
+Query to compare total votes of top three parties:
+SELECT 
+   Top 3 Party, 
+    AVG(Total_Votes) AS Average_Total_Votes
+FROM 
+    [Apelection].[dbo].[APelections]
+GROUP BY 
+    Party
+ORDER BY 
+    Average_Total_Votes DESC
+Query to analyze the performance of candidates from a specific party:
+SELECT 
+Party,
+AVG(Percentage_of_Votes) AS Average_Percentage_of_Votes
+FROM 
+    [Apelection].[dbo].[APelections]
+WHERE 
+    Party = 'Janasena Party'
+GROUP BY 
+    Party;
+
+3. EVM vs. Postal Votes Impact
+Query to find the candidate for whom postal votes made the most significant difference:
+SELECT 
+    Candidate, 
+    Assembly_Constituency, 
+    Postal_Votes, 
+    Total_Votes,
+    (Postal_Votes / Total_Votes) * 100 AS Postal_Votes_Percentage
+FROM 
+   [Apelection].[dbo].[APelections]
+ORDER BY 
+    Postal_Votes_Percentage DESC;
+Query to identify constituencies with the highest discrepancy between EVM and Postal votes:
+SELECT 
+    Assembly_Constituency_Number, Assembly_Constituency, 
+    MAX(ABS(EVM_Votes - [Postal_Votes])) AS Vote_Discrepancy
+FROM 
+    [Apelection].[dbo].[APelections]
+GROUP BY 
+    Assembly_Constituency ,  Assembly_Constituency_Number
+ORDER BY 
+     Assembly_Constituency_Number Asc, Vote_Discrepancy DESC;
+4. Top Performers and Underperformers
+Query to list top five candidates with the highest percentage of votes:
+SELECT 
+   Top 5 Candidate, 
+    Assembly_Constituency, 
+    Percentage_of_Votes
+FROM 
+    [Apelection].[dbo].[APelections]
+ORDER BY 
+    Percentage_of_Votes DESC
+Query to find the candidates with the lowest total votes:
+SELECT 
+    Candidate, 
+    Assembly_Constituency, 
+    Total_Votes, 
+    Percentage_of_Votes
+FROM 
+    [Apelection].[dbo].[APelections] AS a
+WHERE 
+    Total_Votes = (
+        SELECT 
+            MIN(Total_Votes)
+        FROM 
+            [Apelection].[dbo].[APelections] AS b
+        WHERE 
+            a.Assembly_Constituency = b.Assembly_Constituency
+    );
+5. Constituency-Specific Trends
+Query to analyze voting patterns in urban vs. rural constituencies: (Assuming an additional column Constituency Type exists indicating urban or rural)
+SELECT 
+    `Constituency Type`, 
+    AVG(`Percentage of Votes`) AS `Average Percentage of Votes`
+FROM 
+    election_data
+GROUP BY 
+    `Constituency Type`;
+Query to compare party performance in each constituency:
+SELECT 
+    Assembly_Constituency, 
+    Party, 
+    AVG(Total_Votes) AS Average_Total_Votes, 
+    AVG(Percentage_of_Votes) AS Average_Percentage_of_Votes
+FROM 
+    [Apelection].[dbo].[APelections]
+GROUP BY 
+    Assembly_Constituency, 
+    Party;
+
+6. Voter Turnout and Participation
+Query to calculate voter turnout for each constituency:
+SELECT 
+    Assembly_Constituency, 
+    SUM(Total_Votes) AS Voter_Turnout
+FROM 
+    [Apelection].[dbo].[APelections]
+GROUP BY 
+    Assembly_Constituency
+ORDER BY 
+    Voter_Turnout DESC;
+7. Impact of Postal Votes
+Query to evaluate the significance of postal votes:
+SELECT 
+    Assembly_Constituency, 
+    SUM(Postal_Votes) AS Total_Postal_Votes, 
+    SUM(Total_Votes) AS Total_Votes, 
+    (SUM(Postal_Votes) / SUM(Total_Votes)) * 100 AS Postal_Votes_Percentage
+FROM 
+    [Apelection].[dbo].[APelections]
+GROUP BY 
+    Assembly_Constituency
+ORDER BY 
+    Postal_Votes_Percentage DESC;
+8. Incumbents vs. New Candidates
+Query to compare incumbents and new candidates: (Assuming an additional column Candidate Type indicating incumbent or new)
+sql
+Copy code
+SELECT 
+    `Candidate Type`, 
+    AVG(`Total Votes`) AS `Average Total Votes`, 
+    AVG(`Percentage of Votes`) AS `Average Percentage of Votes`
+FROM 
+    election_data
+GROUP BY 
+    `Candidate Type`;
+9. Assembly Constituency Analysis
+Query to find the candidate who finished second in each constituency:
+WITH RankedCandidates AS (
+    SELECT 
+        Assembly_Constituency, 
+        Candidate, 
+        Total_Votes,
+		Party,
+        ROW_NUMBER() OVER (PARTITION BY Assembly_Constituency ORDER BY Total_Votes DESC) AS Rank
+    FROM 
+       [Apelection].[dbo].[APelections]
+)
+SELECT 
+   Assembly_Constituency, 
+        Candidate, 
+        Total_Votes,
+		Party
+FROM RankedCandidates
+WHERE 
+    Rank = 2;
+
+10. Overall Party Performance
+Query to determine overall party performance:
+
+
+SELECT 
+    Party,
+    AVG(Percentage_of_Votes) AS Average_Percentage_of_Votes
+FROM 
+   [Apelection].[dbo].[APelections]
+
+GROUP BY 
+    Party
+ORDER BY 
+   Average_Percentage_of_Votes DESC;
+
